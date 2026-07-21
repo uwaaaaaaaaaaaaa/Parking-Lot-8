@@ -92,6 +92,12 @@ public class GameDirector : MonoBehaviour
 
     public void JudgeBack()
     {
+        if(StageCount >= 9)
+        {
+                        FadeOutAnimation();
+            Debug.Log("EndingScene‚Ö‘JˆÚ");
+            return;
+        }
         if(StageCount < 9) { 
         for (int i = 0; i < targets.Length; i++)
         {
@@ -120,10 +126,7 @@ public class GameDirector : MonoBehaviour
             }
         }
         }
-        else
-        {
-            FadeOutAnimation();
-        }
+        
 
     }
 

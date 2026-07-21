@@ -1,7 +1,8 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 using UnityEngine.UI;
+//using UnityEngine.UIElements;
 
 public class StartDirector : MonoBehaviour
 {
@@ -11,6 +12,11 @@ public class StartDirector : MonoBehaviour
     public Animator playerAnimator;
     //ボタンとかあるCanvas用
     public GameObject StartCanvas;
+    //SE,BGM類
+    public AudioSource bgm;
+    public AudioSource runningSE;
+    public AudioSource ClickSE;
+
 
     
     void Start()
@@ -25,28 +31,42 @@ public class StartDirector : MonoBehaviour
         //表示した状態ではじめる
         StartCanvas.SetActive(true);
 
+        // BGM再生
+        bgm.loop = true;
         
+        bgm.Play();
+
+
     }
 
     //ボタン押下でプレイヤーのアニメーションとフェードアウトが始まる
     public void StartGameBtn()
     {
         StartCanvas.SetActive(false);
+        ClickSE.Play();
         playerAnimator.SetTrigger("start");
         playerAnimator.SetBool("Run", true);
+        Invoke(nameof(StartRunningSE), 1f);
         Invoke("startgameFade", 3f);
     }
 
+    void StartRunningSE()
+{
+        runningSE.loop = true;
+        runningSE.Play();
+}
 
-    public void startgameFade()
+public void startgameFade()
     {
         StartCoroutine(FadeAndLoad());
     }
 
     IEnumerator FadeAndLoad()
     {
+        float startVolume = runningSE.volume;
         float duration = 1f;
         float time = 0f;
+        float ratio = time / duration;
 
         Color color = fadeImage.color;
 
@@ -57,6 +77,8 @@ public class StartDirector : MonoBehaviour
 
             color.a = alpha;
             fadeImage.color = color;
+
+            runningSE.volume = Mathf.Lerp(startVolume, 0f, ratio);
 
             yield return null;
         }

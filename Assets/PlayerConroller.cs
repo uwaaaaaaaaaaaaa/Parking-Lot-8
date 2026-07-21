@@ -101,10 +101,11 @@ public class PlayerConroller : MonoBehaviour
             transform.position = new Vector3(backGateX - offset, transform.position.y, transform.position.z);
             GameDirector.GetComponent<GameDirector>().JudgeForward();
         }
-        if (transform.position.x >= backGateX && GameDirector.GetComponent<GameDirector>().StageCount <= 8)
+        if (transform.position.x >= backGateX)
         {
             transform.position = new Vector3(forwardGateX + offset, transform.position.y, transform.position.z);
             GameDirector.GetComponent<GameDirector>().JudgeBack();
+            Debug.Log("‰œ’Ê‰ß");
         }
 
 

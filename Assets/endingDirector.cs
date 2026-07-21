@@ -58,6 +58,9 @@ public class endingDirector : MonoBehaviour
         // 確実に透明にする
         color.a = 0f;
         fadeImage.color = color;
+
+        //ボタンの判定の邪魔になるのでイメージを非表示にする
+        fadeImage.gameObject.SetActive(false);
     }
 
 }
