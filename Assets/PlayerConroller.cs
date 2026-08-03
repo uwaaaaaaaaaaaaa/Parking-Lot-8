@@ -20,6 +20,10 @@ public class PlayerConroller : MonoBehaviour
     float offset = 0.1f;
     //ルール管理オブジェクト
     GameObject GameDirector;
+    //音声関係
+    public AudioClip RunnnigSE;
+    public AudioClip IdleSE;
+    AudioSource adSource;
 
     void Start()
     {
@@ -33,6 +37,8 @@ public class PlayerConroller : MonoBehaviour
         backGateX = GameObject.Find("backGate").transform.position.x;
         Debug.Log(forwardGateX);
         Debug.Log(backGateX);
+        //オーディオソースの取得
+        adSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
