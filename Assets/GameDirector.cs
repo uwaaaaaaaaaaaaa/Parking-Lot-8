@@ -23,6 +23,9 @@ public class GameDirector : MonoBehaviour
     //出口表示切り替え用
     public GameObject InfBoardNum;
     public GameObject InfBoardExit;
+    //BGMのソース
+    AudioSource BgmSource;
+    public AudioClip BgmClip;
 
     void Start()
     {
@@ -34,12 +37,21 @@ public class GameDirector : MonoBehaviour
         fadeImage.color = color;
         FadeInAnimation();
         InfBoardNum.SetActive(true);
-        InfBoardExit.SetActive(false);   
+        InfBoardExit.SetActive(false);
+        //オーディオソースの取得
+        BgmSource = GetComponent<AudioSource>();
+        //音量の取得
+        BgmSource.volume = AudioManager.Instance.bgmVolume;
+        //BGMを再生する
+        BgmSource.clip = BgmClip;
+        BgmSource.loop = true;
+        BgmSource.Play();
     }
 
     // Update is called once per frame
     void Update()
     {
+
         //現在のステージが間違いかどうか決める
         if (!(StageCount == 0) && RandomParam < IncorrectProbability && !(StageCount >= 9))
         {
@@ -169,6 +181,8 @@ public class GameDirector : MonoBehaviour
         //確実に透明にする
         color.a = 0f;
         fadeImage.color = color;
+        //邪魔になるので非表示
+        fadeImage.gameObject.SetActive(false);
     }
 
     //終わりのフェードアウト
@@ -179,6 +193,9 @@ public class GameDirector : MonoBehaviour
 
     IEnumerator FadeAndLoad()
     {
+        //再び表示
+        fadeImage.gameObject.SetActive(true);
+
         float duration = 1f;
         float time = 0f;
 

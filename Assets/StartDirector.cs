@@ -12,13 +12,13 @@ public class StartDirector : MonoBehaviour
     public Animator playerAnimator;
     //ボタンとかあるCanvas用
     public GameObject StartCanvas;
-    //SE,BGM類
-    public AudioSource bgm;
-    public AudioSource runningSE;
-    public AudioSource ClickSE;
+    //BGMとSEのクリップ
+    public AudioClip BgmSource;
+    public AudioClip SeSource;
+    //BGMとSEのオーディオソース
+    public AudioSource BGMaudioSource;
+    public AudioSource SEaudioSource;
 
-
-    
     void Start()
     {
         
@@ -31,30 +31,28 @@ public class StartDirector : MonoBehaviour
         //表示した状態ではじめる
         StartCanvas.SetActive(true);
 
-        // BGM再生
-        bgm.loop = true;
-        
-        bgm.Play();
-
-
+        //音量を調整し、BGMを再生する
+        BGMaudioSource.loop = true;
+        BGMaudioSource.clip = BgmSource;
+        BGMaudioSource.Play();
     }
-
+    public void Update()
+    {
+        //音量を調整する
+        BGMaudioSource.volume = AudioManager.Instance.bgmVolume;
+        SEaudioSource.volume = AudioManager.Instance.ButtonSeVolume;
+    }
     //ボタン押下でプレイヤーのアニメーションとフェードアウトが始まる
     public void StartGameBtn()
     {
+        //ボタンのSEを鳴らす
+        SEaudioSource.PlayOneShot(SeSource);
         StartCanvas.SetActive(false);
-        ClickSE.Play();
         playerAnimator.SetTrigger("start");
         playerAnimator.SetBool("Run", true);
-        Invoke(nameof(StartRunningSE), 1f);
         Invoke("startgameFade", 3f);
     }
 
-    void StartRunningSE()
-{
-        runningSE.loop = true;
-        runningSE.Play();
-}
 
 public void startgameFade()
     {
@@ -63,7 +61,6 @@ public void startgameFade()
 
     IEnumerator FadeAndLoad()
     {
-        float startVolume = runningSE.volume;
         float duration = 1f;
         float time = 0f;
         float ratio = time / duration;
@@ -78,7 +75,6 @@ public void startgameFade()
             color.a = alpha;
             fadeImage.color = color;
 
-            runningSE.volume = Mathf.Lerp(startVolume, 0f, ratio);
 
             yield return null;
         }

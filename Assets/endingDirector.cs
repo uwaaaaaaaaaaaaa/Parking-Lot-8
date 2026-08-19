@@ -9,6 +9,16 @@ public class endingDirector : MonoBehaviour
     public Image fadeImage;
     //プレイヤーのアニメーション操作用
     public Animator playerAnimator;
+    //ボタンが押された際のSE
+    public AudioClip buttonSE;
+    AudioSource audioSource;
+    //クリックボタンの音量を調整するための変数
+    public float buttonSEVolume = 0.2f;
+    //BGMとSEのクリップ
+    public AudioClip BgmSource;
+    public AudioClip SeSource;
+    //オーディオソース
+    AudioSource audioSourceBGM;
 
 
     void Start()
@@ -23,12 +33,23 @@ public class endingDirector : MonoBehaviour
 
         StartCoroutine(FadeIn());
 
+        //オーディオソースの取得
+        audioSourceBGM = GetComponent<AudioSource>();
+
+        //音量を調整し、BGMを再生する
+        audioSourceBGM.loop = true;
+        audioSourceBGM.volume = AudioManager.Instance.bgmVolume;
+        audioSourceBGM.Play();
+
     }
 
     //ボタンで関連付ける
     public void BackTitle()
     {
-        SceneManager.LoadScene("TitleScene");
+        //音量を調整し、ボタンのSEを再生したあとにタイトルシーンに遷移する
+        audioSourceBGM.volume = AudioManager.Instance.ButtonSeVolume;
+        audioSourceBGM.PlayOneShot(buttonSE);
+        StartCoroutine(WaitAndLoadScene("TitleScene", buttonSE.length));
     }
 
     public void FadeInAnimation()
@@ -62,5 +83,10 @@ public class endingDirector : MonoBehaviour
         //ボタンの判定の邪魔になるのでイメージを非表示にする
         fadeImage.gameObject.SetActive(false);
     }
-
+    
+    IEnumerator WaitAndLoadScene(string sceneName, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(sceneName);
+    }
 }

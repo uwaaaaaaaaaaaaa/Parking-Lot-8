@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 public class PlayerConroller : MonoBehaviour
 {
     //プレイヤーの移動速度
@@ -21,9 +22,13 @@ public class PlayerConroller : MonoBehaviour
     //ルール管理オブジェクト
     GameObject GameDirector;
     //音声関係
+    public AudioClip awakeRunSE;
     public AudioClip RunnnigSE;
-    public AudioClip IdleSE;
     AudioSource adSource;
+    //走行音が流れ続けるのを防ぐためのフラグ
+    private bool isRunningSEPlaying = false;
+    //awake音声の流れ終わりを早める
+    float awakeRunEndTime = 0.5f;
 
     void Start()
     {
@@ -39,6 +44,7 @@ public class PlayerConroller : MonoBehaviour
         Debug.Log(backGateX);
         //オーディオソースの取得
         adSource = GetComponent<AudioSource>();
+
     }
 
     // Update is called once per frame
@@ -83,6 +89,17 @@ public class PlayerConroller : MonoBehaviour
             }
         }
 
+        //ボタンが押されている間は走行音を流す
+        if (isRunning && !isRunningSEPlaying)
+        {
+            StartCoroutine(PlayRunningSE());
+        }
+            else if (!isRunning && isRunningSEPlaying)
+        {
+            StopAllCoroutines();
+            adSource.Stop();
+            isRunningSEPlaying = false;
+        }
 
         //3秒以上放置している場合にアニメーションを切り替える
         if (isKeyPressed)
@@ -122,10 +139,11 @@ public class PlayerConroller : MonoBehaviour
 
     }
 
+    // プレイヤーの移動処理
     public void RunningRight()
     {
         isRunning = true;
-        if(Keyboard.current.leftShiftKey.isPressed)
+        if (Keyboard.current.leftShiftKey.isPressed)  
             transform.position += Vector3.right * speed * 1.5f * Time.deltaTime;
         else
                     transform.position += Vector3.right * speed * Time.deltaTime;
@@ -133,7 +151,7 @@ public class PlayerConroller : MonoBehaviour
     public void RunningLeft()
     {
         isRunning = true;
-        if (Keyboard.current.leftShiftKey.isPressed)
+        if (Keyboard.current.leftShiftKey.isPressed) 
             transform.position += Vector3.left * speed * 1.5f * Time.deltaTime;
         else
             transform.position += Vector3.left * speed * Time.deltaTime;
@@ -144,6 +162,27 @@ public class PlayerConroller : MonoBehaviour
     {
         isTurning = false;
         transform.localScale = new Vector3(defaultScale * nextfacing, defaultScale, defaultScale);
+    }
+
+    //走り始めと走行中のSEを流すコルーチン
+    IEnumerator PlayRunningSE()
+    {
+        //現在のSEの音量を取得
+        adSource.volume = AudioManager.Instance.PlayerSeVolume;
+        isRunningSEPlaying = true;
+
+        adSource.loop = false;
+        adSource.clip = awakeRunSE;
+        adSource.Play();
+
+        yield return new WaitForSeconds(awakeRunEndTime);
+
+        if (isRunningSEPlaying)
+        {
+            adSource.clip = RunnnigSE;
+            adSource.loop = true;
+            adSource.Play();
+        }
     }
 
 }
