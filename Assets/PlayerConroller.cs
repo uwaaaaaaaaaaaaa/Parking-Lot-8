@@ -52,20 +52,21 @@ public class PlayerConroller : MonoBehaviour
     {
         isRunning = false; 
         //左右キーが押されているかどうかを判定する
-        bool isKeyPressed = Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed;
+        bool isKeyPressed = Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed || Pointer.current != null && Pointer.current.press.isPressed && Pointer.current.position.ReadValue().x < Screen.width / 2f || 
+            Pointer.current != null && Pointer.current.press.isPressed && Pointer.current.position.ReadValue().x > Screen.width / 2f;
 
         //自身の向いている方向と移動方向が逆の場合に旋回アニメーションを再生する
 
         if (!isTurning)
         {
-            if (Keyboard.current.leftArrowKey.isPressed && transform.localScale.x > 0)
+            if (Keyboard.current.leftArrowKey.isPressed || Pointer.current != null && Pointer.current.press.isPressed && Pointer.current.position.ReadValue().x < Screen.width / 2f && transform.localScale.x > 0)
             {
                 isTurning = true;
                 anim.SetTrigger("turn");
                 nextfacing = -1;
                 
             }
-            else if (Keyboard.current.rightArrowKey.isPressed && transform.localScale.x < 0)
+            else if (Keyboard.current.rightArrowKey.isPressed || Pointer.current != null && Pointer.current.press.isPressed && Pointer.current.position.ReadValue().x > Screen.width / 2f && transform.localScale.x < 0)
             {
                 isTurning = true;
                 anim.SetTrigger("turn");
@@ -79,11 +80,11 @@ public class PlayerConroller : MonoBehaviour
 
         if (!isTurning)
         {
-            if (Keyboard.current.leftArrowKey.isPressed)
+            if (Keyboard.current.leftArrowKey.isPressed || Pointer.current != null && Pointer.current.press.isPressed && Pointer.current.position.ReadValue().x < Screen.width / 2f)
             {
                 RunningLeft();
             }
-            if (Keyboard.current.rightArrowKey.isPressed)
+            if (Keyboard.current.rightArrowKey.isPressed || Pointer.current != null && Pointer.current.press.isPressed && Pointer.current.position.ReadValue().x > Screen.width / 2f)
             {
                 RunningRight();
             }
